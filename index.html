@@ -2,53 +2,133 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>GREENIE – Dashboard</title>
+<title>AgreeInTec – GREENIE</title>
 <style>
-body { font-family: Arial; background:#f4f9f6; padding:20px; }
-h1 { color:#2a7f62; text-align:center; }
-select { padding:6px; margin:10px 0; }
-#cards { display:flex; gap:15px; justify-content:center; }
-.card {
-  background:white; padding:15px; border-radius:10px;
-  box-shadow:0 2px 5px rgba(0,0,0,.1);
-  width:150px; text-align:center;
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f9f6;
+  margin: 0;
+  color: #333;
 }
-footer { text-align:center; margin-top:30px; color:#777; }
+header {
+  background: #2a7f62;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+nav {
+  background: #1f5f4b;
+  padding: 10px;
+  text-align: center;
+}
+nav a {
+  color: white;
+  margin: 0 10px;
+  text-decoration: none;
+  font-weight: bold;
+}
+section {
+  padding: 20px;
+}
+h2 { color:#2a7f62; }
+#cards {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+.card {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,.1);
+  width: 150px;
+  text-align: center;
+}
+footer {
+  background:#1f5f4b;
+  color:white;
+  text-align:center;
+  padding:10px;
+}
 </style>
 </head>
 <body>
 
-<h1>GREENIE – Panel Meteorológico</h1>
+<header>
+  <h1>AgreeInTec</h1>
+  <p>Soluciones tecnológicas sustentables para el campo</p>
+</header>
 
-<label>Selecciona un estado:</label><br>
-<select id="estado"></select>
+<nav>
+  <a href="#inicio">Inicio</a>
+  <a href="#weather">Weather</a>
+  <a href="#sensores">Sensores</a>
+  <a href="#soporte">Soporte</a>
+</nav>
 
-<div id="cards"></div>
+<section id="inicio">
+  <h2>Proyecto GREENIE</h2>
+  <p>
+    Plataforma para visualizar datos ambientales, apoyar al agricultor
+    y conectar instituciones.
+  </p>
+</section>
+
+<section id="weather">
+  <h2>Clima en tiempo real</h2>
+  <label>Selecciona un estado:</label><br>
+  <select id="estado"></select>
+  <div id="cards"></div>
+</section>
+
+<section id="sensores">
+  <h2>Sensores (simulación)</h2>
+  <div id="sensor"></div>
+</section>
+
+<section id="soporte">
+  <h2>Red de apoyo</h2>
+  <p>Conecta con estudiantes, expertos e instituciones.</p>
+</section>
 
 <footer>
-  Proyecto piloto – AgreeInTec 🌱
+  GREENIE – AgreeInTec © 2026
 </footer>
 
 <script>
-const estados = ["Veracruz","Jalisco","Chiapas","Puebla","Oaxaca"];
+const estados = {
+  "Veracruz": {lat:19.17, lon:-96.13},
+  "Jalisco": {lat:20.65, lon:-103.35},
+  "Chiapas": {lat:16.75, lon:-93.12},
+  "Puebla": {lat:19.04, lon:-98.20},
+  "Oaxaca": {lat:17.07, lon:-96.72}
+};
+
 const select = document.getElementById("estado");
 const cards = document.getElementById("cards");
 
-estados.forEach(e=>{
+Object.keys(estados).forEach(e=>{
   let op = document.createElement("option");
   op.value = e; op.textContent = e;
   select.appendChild(op);
 });
 
-function generar(){
+async function cargarClima(estado){
+  const {lat, lon} = estados[estado];
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
+  const res = await fetch(url);
+  const data = await res.json();
+  const c = data.current_weather;
+
   cards.innerHTML = `
-    <div class="card">🌡️ ${(20+Math.random()*15).toFixed(1)} °C</div>
-    <div class="card">💧 ${(40+Math.random()*40).toFixed(0)} %</div>
-    <div class="card">🌬️ ${(2+Math.random()*15).toFixed(1)} km/h</div>
+    <div class="card">🌡️ ${c.temperature} °C</div>
+    <div class="card">🌬️ ${c.windspeed} km/h</div>
+    <div class="card">🧭 ${c.winddirection}°</div>
   `;
 }
-select.addEventListener("change", generar);
-generar();
+
+select.addEventListener("change", e => cargarClima(e.target.value));
+cargarClima(Object.keys(estados)[0]);
 </script>
 
 </body>
