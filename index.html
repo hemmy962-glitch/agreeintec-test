@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>GREENIE – Dashboard</title>
+<style>
+body { font-family: Arial; background:#f4f9f6; padding:20px; }
+h1 { color:#2a7f62; text-align:center; }
+select { padding:6px; margin:10px 0; }
+#cards { display:flex; gap:15px; justify-content:center; }
+.card {
+  background:white; padding:15px; border-radius:10px;
+  box-shadow:0 2px 5px rgba(0,0,0,.1);
+  width:150px; text-align:center;
+}
+footer { text-align:center; margin-top:30px; color:#777; }
+</style>
+</head>
+<body>
+
+<h1>GREENIE – Panel Meteorológico</h1>
+
+<label>Selecciona un estado:</label><br>
+<select id="estado"></select>
+
+<div id="cards"></div>
+
+<footer>
+  Proyecto piloto – AgreeInTec 🌱
+</footer>
+
+<script>
+const estados = ["Veracruz","Jalisco","Chiapas","Puebla","Oaxaca"];
+const select = document.getElementById("estado");
+const cards = document.getElementById("cards");
+
+estados.forEach(e=>{
+  let op = document.createElement("option");
+  op.value = e; op.textContent = e;
+  select.appendChild(op);
+});
+
+function generar(){
+  cards.innerHTML = `
+    <div class="card">🌡️ ${(20+Math.random()*15).toFixed(1)} °C</div>
+    <div class="card">💧 ${(40+Math.random()*40).toFixed(0)} %</div>
+    <div class="card">🌬️ ${(2+Math.random()*15).toFixed(1)} km/h</div>
+  `;
+}
+select.addEventListener("change", generar);
+generar();
+</script>
+
+</body>
+</html>
